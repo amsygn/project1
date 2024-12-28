@@ -1,22 +1,16 @@
-card_num = int(input("Введите номер карты (16 цифр)\n"))
-account_num = int(input("Введите номер счета (20 цифр)\n"))
+# card_num = int(input("Введите номер карты (16 цифр)\n"))
+# account_num = int(input("Введите номер счета (20 цифр)\n"))
 
 
-def get_mask_card_number(card_num: int) -> str:
+def get_mask_card_number(card_num: str) -> str:
     """ Функция маскировки номера банковской карты """
 
-    card_number = str(card_num)
-
-    # Проверяем формат карты: число из 16 цифр
-    if not len(card_number) == 16:
-        return " Неверный формат номера карты"
-
-    card_mask = card_number[:6] + ('*' * 6) + card_number[-4:]
+    card_mask = card_num[:6] + ('*' * 6) + card_num[-4:]
 
     # Разбиваем маску на блоки
     card_parts = []
     for i in range(0, len(card_mask), 4):
-        card_parts.append(card_mask[i : (i + 4)])
+        card_parts.append(card_mask[i: (i + 4)])
 
     return ' '.join(card_parts)
 
