@@ -1,4 +1,7 @@
-from src.widget import get_mask_card_number
+from src.widget import mask_account_card
 
-print(get_mask_card_number())
+print(mask_account_card('Счет 12345678901234567890'))
+print(mask_account_card('Visa Super Puper 1234567890123456'))
+print(mask_account_card('Visa Super 1234567890123456'))
+print(mask_account_card('Visa 1234567890123456'))
 

@@ -7,9 +7,10 @@ def mask_account_card(user_input: str) -> str:
     input_split = user_input.split()
     # определяем формат номера - карта или счет
     if len(input_split[-1]) == 16:
-        return get_mask_card_number(input_split[-1])
+        input_split[-1] = get_mask_card_number(input_split[-1])
     else:
-        return get_mask_account(int(input_split[-1]))
+        input_split[-1] = get_mask_account(int(input_split[-1]))
+    return " ".join(input_split)
 
 
 def get_date(user_date: str) -> str:
