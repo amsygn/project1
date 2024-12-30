@@ -10,12 +10,12 @@ def mask_account_card(user_input: str) -> str:
         input_split[-1] = get_mask_card_number(input_split[-1])
     else:
         input_split[-1] = get_mask_account(int(input_split[-1]))
-    return " ".join(input_split)
+    return  ' '.join(input_split)
 
 
 def get_date(user_date: str) -> str:
     """Возвращает строку с датой в формате ДД.ММ.ГГГГ"""
-    return user_date[8:10] + "." + user_date[5:7] + "." + user_date[0:4]
+    return user_date[8:10] + '.' + user_date[5:7] + '.' + user_date[0:4]
 
 
 # user_input: str = input('>')
