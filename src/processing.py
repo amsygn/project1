@@ -1,6 +1,5 @@
 from typing import List
 
-
 def filter_by_state(data_logs: List[dict], state: str = "EXECUTED") -> List[dict]:
     """ Возвращает новый список словарей, содержащий только те словари,
     у которых ключ state соответствует указанному значению. """
@@ -16,5 +15,8 @@ def filter_by_state(data_logs: List[dict], state: str = "EXECUTED") -> List[dict
 
 def sort_by_date(data_logs: List[dict], reverse: bool=True) -> List[dict]:
     """ Возвращает новый список, отсортированный по дате """
-
-    return sorted(data_logs, key=lambda x: x["date"], reverse=reverse)
+    for d in data_logs:
+        if d['date'] == '':
+            raise ValueError("Нет даты транзакции")
+    else:
+        return sorted(data_logs, key=lambda x: x["date"], reverse=reverse)
