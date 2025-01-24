@@ -14,7 +14,10 @@ def filter_by_state(data_logs: List[dict], state: str = "EXECUTED") -> List[dict
     return data_filter
 
 
-def sort_by_date(data_logs: List[dict], reverse: bool=True) -> List[dict]:
+def sort_by_date(data_logs: List[dict], reverse: bool = True) -> List[dict]:
     """ Возвращает новый список, отсортированный по дате """
-
-    return sorted(data_logs, key=lambda x: x["date"], reverse=reverse)
+    for d in data_logs:
+        if d['date'] == '':
+            raise ValueError("Нет даты транзакции")
+    else:
+        return sorted(data_logs, key=lambda x: x["date"], reverse=reverse)

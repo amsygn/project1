@@ -7,12 +7,18 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
+pytest = "^8.3.4"
 
 [tool.poetry.group.lint.dependencies]
 flake8 = "^7.1.1"
 black = "^24.10.0"
 mypy = "^1.13.0"
 isort = "^5.13.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
 
 [tool.black]
 exclude = '''
