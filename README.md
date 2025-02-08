@@ -70,18 +70,20 @@ Default: EXECUTED
 ---------- coverage: platform win32, python 3.13.0-final-0 -----------
 Name                       Stmts   Miss  Cover
 ----------------------------------------------
+src\__init__.py                0      0   100%
 src\decorators.py             20      4    80%
 src\generators.py             13      0   100%
 src\masks.py                   8      0   100%
 src\processing.py             12      0   100%
 src\widget.py                 11      0   100%
+tests\__init__.py              0      0   100%
 tests\conftest.py              4      0   100%
-tests\test_decorators.py      15      3    80%
-tests\test_generators.py      24      0   100%
+tests\test_decorators.py      14      3    79%
+tests\test_generators.py      24      3    88%
 tests\test_masks.py            6      0   100%
 tests\test_processing.py      21      1    95%
 tests\test_widget.py          17      0   100%
 ----------------------------------------------
-TOTAL                        151      8    95%
+TOTAL                        150     11    93%
 ```
 
