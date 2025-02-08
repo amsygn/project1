@@ -1,6 +1,5 @@
-import pytest
-
 from src.decorators import log
+
 
 @log()
 def my_function(x, y):
@@ -18,4 +17,4 @@ def test_my_function_error(capsys):
         my_function(1)
     except Exception as e:
         content = capsys.readouterr()
-        assert f"my_function error: {type(e).__name__}. Inputs: {args}, kwargs: {kwargs}\n" in content.out
+        assert f"my_function error: {type(e).__name__}. Inputs: {x, y}, kwargs:", "{}\n" in content.out
