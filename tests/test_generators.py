@@ -52,3 +52,15 @@ def test_card_number_generator():
     assert next(card_num_gen) == "0000 0000 0001 0002"
 
 
+@pytest.mark.parametrize("start, stop, expected_output", [
+    (1, 4, [
+        "0000 0000 0000 0001",
+        "0000 0000 0000 0002",
+        "0000 0000 0000 0003",
+        "0000 0000 0000 0004"
+    ]),
+])
+def test_card_number_generator(start, stop, expected_output):
+    generator = card_number_generator(start, stop)
+    for expected in expected_output:
+        assert next(generator) == expected
