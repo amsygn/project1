@@ -167,4 +167,4 @@ cython_debug/
 .pypirc
 
 # test and homework files
-test12.1.py
+extra/
