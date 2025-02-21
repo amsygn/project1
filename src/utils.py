@@ -3,7 +3,6 @@ from json import JSONDecodeError
 
 import json
 
-from dotenv import load_dotenv
 from config import DATA_DIR
 
 
@@ -15,7 +14,7 @@ def get_file(file_name: str):
             data = json.load(file)
 
         # Проверяем, что данные являются списком
-        if isinstance(data, list):
+        if isinstance(data, list | dict):
             return data
         else:
             print("Нет данных")
@@ -31,6 +30,6 @@ def get_file(file_name: str):
 
 
 # Пример использования get_file
-opers = get_file('operations.json')
-print(opers)
+# opers = get_file('operations.json')
+# print(opers)
 
