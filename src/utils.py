@@ -1,5 +1,4 @@
 import os
-from json import JSONDecodeError
 
 import json
 

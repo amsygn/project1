@@ -1,51 +1,85 @@
 import os
-from json import JSONDecodeError
-
 import requests
-import json
-
 from dotenv import load_dotenv
-from config import DATA_DIR
+
+transaction_rub = {
+    "id": 441945886,
+    "state": "EXECUTED",
+    "date": "2019-08-26T10:50:58.294041",
+    "operationAmount": {
+      "amount": "31957.58",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    },
+    "description": "Перевод организации",
+    "from": "Maestro 1596837868705199",
+    "to": "Счет 64686473678894779589"
+}
+transaction_usd = {
+    "id": 41428829,
+    "state": "EXECUTED",
+    "date": "2019-07-03T18:35:29.512364",
+    "operationAmount": {
+      "amount": "8221.37",
+      "currency": {
+        "name": "USD",
+        "code": "USD"
+      }
+    },
+    "description": "Перевод организации",
+    "from": "MasterCard 7158300734726758",
+    "to": "Счет 35383033474447895560"
+}
 
 
-def convert_operations(file_name: str):
-    """ Возвращает сумму транзакции в рублях, при необходимости с конвертацией валюты через API внешнего сервиса """
+def convert_to_rub(transaction):
+    """ Конвертирует сумму транзакции в рубли. """
     load_dotenv()
-    apikey = os.getenv("API_KEY")
-    headers = {"apikey": apikey}
-    file_path = os.path.join(DATA_DIR, file_name)
+    API_KEY = os.getenv("API_KEY")
+    API_URL = "https://api.apilayer.com/exchangerates_data/convert"
 
-    with open(file_path, 'r', encoding='utf-8') as file:
-        try:
-            operations = json.load(file)  # Загружаем данные из файла
-        except JSONDecodeError:
-            return []
+    amount = transaction["operationAmount"]["amount"]
+    currency = transaction["operationAmount"]["currency"]["code"]
 
-    op_results = []
+    # Если валюта уже в рублях, возвращаем сумму без изменений
+    if currency == "RUB":
+        return round(float(amount), 2)
 
-    for op in operations:
-        op_id = op["id"]
-        op_code = op["operationAmount"]["currency"]["code"]
-        op_amount = float(op["operationAmount"]["amount"])
+    # Параметры запроса к API
+    params = {
+        "to": "RUB",
+        "from": currency,
+        "amount": amount,
+    }
+    headers = {
+        "apikey": API_KEY,
+    }
 
-        if op_code == "RUB":
-            op_results.append({"id": op_id, "amount_rub": round(op_amount, 2)})  # Добавляем сумму в рублях
-        else:
-            # Конвертируем валюту в рубли через API
-            url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={op_code}&amount={op_amount}"
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                result = response.json()
-                op_results.append({"id": op_id, "amount_rub": round(result["result"], 2)})
-            else:
-                op_results.append({"id": op_id, "error": response.status_code})
+    try:
+        # Выполняем запрос к API
+        response = requests.get(API_URL, params=params, headers=headers)
+        response.raise_for_status()  # Проверяем, что запрос успешен
 
-    file_path = os.path.join(DATA_DIR, "operations_rub.json")
-    with open(file_path, 'a', encoding='utf-8') as file:
-        json.dump(op_results, file, indent=4, ensure_ascii=False)
-    return None
+        # Получаем результат конвертации
+        result = response.json()
+        if "result" not in result:
+            raise ValueError("Некорректный ответ от API.")
 
-# Пример использования convert_operations
-# result_ = convert_operations("operations.json")
-# print(result_, sep="\n")
+        return round(float(result["result"]), 2)
 
+    except requests.exceptions.RequestException as e:
+        # Обрабатываем ошибки запроса
+        raise RuntimeError(f"Ошибка при запросе к API: {e}")
+
+    except (KeyError, ValueError) as e:
+        # Обрабатываем ошибки в данных
+        raise ValueError(f"Ошибка при обработке данных: {e}")
+
+
+# Пример использования convert_to_rub для RUB и USD
+# result_ = convert_to_rub(transaction_rub)
+# print(result_)
+# result_ = convert_to_rub(transaction_usd)
+# print(result_)
