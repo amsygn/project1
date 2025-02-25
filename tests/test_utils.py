@@ -1,10 +1,11 @@
 from unittest.mock import patch, mock_open
 from src.utils import get_file
 
-@patch("builtins.open", new_callable=mock_open, read_data='{"id": "1"}')
+
+@patch("builtins.open", new_callable=mock_open, read_data='[{"id": "1"}]')
 def test_get_info(mock_file, transactions):
     transactions = get_file("test.json")
-    assert transactions == {"id": "1"}
+    assert transactions == [{"id": "1"}]
 
 
 @patch("os.path.join")

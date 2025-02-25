@@ -1,4 +1,5 @@
 import os
+
 import requests
 from dotenv import load_dotenv
 
@@ -7,35 +8,29 @@ transaction_rub = {
     "state": "EXECUTED",
     "date": "2019-08-26T10:50:58.294041",
     "operationAmount": {
-      "amount": "31957.58",
-      "currency": {
-        "name": "руб.",
-        "code": "RUB"
-      }
+        "amount": "31957.58",
+        "currency": {"name": "руб.", "code": "RUB"},
     },
     "description": "Перевод организации",
     "from": "Maestro 1596837868705199",
-    "to": "Счет 64686473678894779589"
+    "to": "Счет 64686473678894779589",
 }
 transaction_usd = {
     "id": 41428829,
     "state": "EXECUTED",
     "date": "2019-07-03T18:35:29.512364",
     "operationAmount": {
-      "amount": "8221.37",
-      "currency": {
-        "name": "USD",
-        "code": "USD"
-      }
+        "amount": "8221.37",
+        "currency": {"name": "USD", "code": "USD"},
     },
     "description": "Перевод организации",
     "from": "MasterCard 7158300734726758",
-    "to": "Счет 35383033474447895560"
+    "to": "Счет 35383033474447895560",
 }
 
 
-def convert_to_rub(transaction):
-    """ Конвертирует сумму транзакции в рубли. """
+def convert_to_rub(transaction: dict) -> float:
+    """Конвертирует сумму транзакции в рубли."""
     load_dotenv()
     API_KEY = os.getenv("API_KEY")
     API_URL = "https://api.apilayer.com/exchangerates_data/convert"

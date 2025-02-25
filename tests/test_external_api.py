@@ -3,7 +3,7 @@ from unittest.mock import patch, Mock
 from src.external_api import convert_to_rub, transaction_rub, transaction_usd
 
 
-def test_convert_rub():
+def test_convert_rub() -> None:
     """Тест транзакции в рублях (RUB)."""
     result = convert_to_rub(transaction_rub)
     assert result == 31957.58
@@ -16,7 +16,9 @@ def test_convert_usd(mock_requests_get, mock_getenv):
     # Мокируем успешный ответ от API
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"result": 75000.0}  # Пример конвертации USD в 75000 RUB
+    mock_response.json.return_value = {
+        "result": 75000.0
+    }  # Пример конвертации USD в 75000 RUB
     mock_requests_get.return_value = mock_response
 
     result = convert_to_rub(transaction_usd)
@@ -31,8 +33,6 @@ def test_convert_usd(mock_requests_get, mock_getenv):
         params={"to": "RUB", "from": "USD", "amount": "8221.37"},
         headers={"apikey": "fake_api_key"},
     )
-
-
 
 
 @patch("os.getenv", return_value="fake_api_key")
