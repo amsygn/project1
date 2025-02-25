@@ -25,10 +25,3 @@ def get_file(file_name: str):
     except Exception as e:
         print(f"Ошибка чтения данных: {e}")
         return []
-
-
-
-# Пример использования get_file
-# opers = get_file('operations.json')
-# print(opers)
-
