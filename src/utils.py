@@ -1,7 +1,16 @@
 import json
 import os
+import logging
 
-from config import DATA_DIR
+from config import DATA_DIR, LOGS_DIR
+
+logger = logging.getLogger()
+logfile_path = os.path.join(LOGS_DIR, 'utils.log')
+file_handler = logging.FileHandler(logfile_path, "w", encoding="utf-8")
+file_formatter = logging.Formatter("%(asctime)s %(funcName)s: %(levelname)s: %(message)s")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+logger.setLevel(logging.INFO)
 
 
 def get_file(file_name: str) -> list:
@@ -13,18 +22,23 @@ def get_file(file_name: str) -> list:
 
         # Проверяем, что данные являются списком
         if isinstance(data, list):
+            logger.info("Файл успешно открыт")
             return data
         else:
-            print("Нет данных")
+            logger.error("Нет данных")
             return []
 
 
     except FileNotFoundError:
-        print(f"Файл {file_name} не найден")
+        logger.error(f"Файл {file_name} не найден")
         return []
     except json.JSONDecodeError:
-        print("Невозможно обработать данные")
+        logger.error("Невозможно обработать данные")
         return []
     except Exception as e:
-        print(f"Ошибка чтения данных: {e}")
+        logger.error(f"Ошибка чтения данных: {e}")
         return []
+
+# Проверка
+file_open = get_file("operations.json")
+print(file_open)
