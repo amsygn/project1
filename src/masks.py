@@ -5,6 +5,7 @@ from config import LOGS_DIR
 
 logging.basicConfig(
     format="%(asctime)s %(funcName)s: %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO
 )
 logger = logging.getLogger()
@@ -16,7 +17,6 @@ logger.addHandler(file_handler)
 
 # создаем именованный логер по имени функции
 func_logger = logging.getLogger(__name__)
-
 
 
 def get_mask_card_number(card_num: str) -> str:
@@ -40,5 +40,5 @@ def get_mask_account(account_num: str) -> str:
     return "**" + account_num[-4:]
 
 # Примеры использования
-# print(get_mask_card_number("1234567890123456"))
-# print(get_mask_account("12345678901234567890"))
+print(get_mask_card_number("1234567890123456"))
+print(get_mask_account("12345678901234567890"))
