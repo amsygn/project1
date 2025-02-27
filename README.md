@@ -1,31 +1,35 @@
-# Домашняя работа 11.2 #
+# Домашняя работа 12.1 #
 ### Цель проекта:
 Разработка виджета для банка
 
 ### Установка и запуск проекта:
-1. Клонировать проект **Homework 11.2** на локальный компьютер.
+1. Клонировать проект **Homework** на локальный компьютер.
 2. Активировать интерпретатор *Poetry* в проекте командой `poetry init`.
 3. В случае его отсутствия выполнить установку необходимых пакетов через менеджер загрузок `pipx` 
 из списка зависимостей в файле `pyproject.toml` или скачать его с [сайта разработчика](https://python-poetry.org/docs/#installation/).
+4. С помощью шаблона `.env.example` создать файл `.env` для хранения чувствительных данных 
+(ключи API, пароли и т.п.) и обязательно добавить его в список исключений `.gitignore`.  
 
 
 ### Содержание проекта:
 В текущей версии в пакете `src` доступны следующие функции и декораторы:
-1. Модуль `generators.py`
+1. Модуль `decorators.py` с декоратором `log`
+2. Модуль `generators.py`
 * `card_number_generator` - генерирует номер карты в заданном диапазоне
 * `filter_by_currency` - фильтрует входящий список транзакций по коду валюты
 * `transaction_descriptions` - возвращает список описаний транзакций
-2. Модуль `msks.py`
+3. Модуль `masks.py`
 * `get_mask_account` - маскировка номера банковского счета
 * `get_mask_card_number` - маскировка номера банковской карты
-3. Модуль `processing.py`
+4. Модуль `processing.py`
 * `filter_by_state` - возвращает новый список словарей, содержащий только те словари,
     у которых ключ state соответствует указанному значению
 * `sort_by_date` - возвращает новый список, отсортированный по дате
-4. Модуль `widget.py`
+5. Модуль `widget.py`
 * `get_date` - возвращает строку с датой в формате ДД.ММ.ГГГГ
 * `mask_account_card` - объединенная функция маскировки номера карты или счета
-В домашнем задании 11.2 добавлен модуль `decorators.py` с декоратором `log`.
+
+В домашнем задании 12.1 добавлены модуль `utils.py` с функцией чтения JSON-файла и модуль `external_api.py` с функцией конвертации валюты транзакции с помощью внешнего API.
 
 
 ### Примеры работы функций:
@@ -68,22 +72,24 @@ Default: EXECUTED
 Статистика по покрытию согласно отчету `pytest-cov`:
 ```
 ---------- coverage: platform win32, python 3.13.0-final-0 -----------
-Name                       Stmts   Miss  Cover
-----------------------------------------------
-src\__init__.py                0      0   100%
-src\decorators.py             20      4    80%
-src\generators.py             13      0   100%
-src\masks.py                   8      0   100%
-src\processing.py             12      0   100%
-src\widget.py                 11      0   100%
-tests\__init__.py              0      0   100%
-tests\conftest.py              4      0   100%
-tests\test_decorators.py      14      3    79%
-tests\test_generators.py      24      3    88%
-tests\test_masks.py            6      0   100%
-tests\test_processing.py      21      1    95%
-tests\test_widget.py          17      0   100%
-----------------------------------------------
-TOTAL                        150     11    93%
+Name                         Stmts   Miss  Cover
+------------------------------------------------
+src\decorators.py               20      4    80%
+src\external_api.py             26      1    96%
+src\generators.py               13      0   100%
+src\masks.py                     8      0   100%
+src\processing.py               12      0   100%
+src\utils.py                    21      8    62%
+src\widget.py                   11      0   100%
+tests\conftest.py                4      0   100%
+tests\test_decorators.py        14      3    79%
+tests\test_external_api.py      29      1    97%
+tests\test_generators.py        24      3    88%
+tests\test_masks.py              6      0   100%
+tests\test_processing.py        21      1    95%
+tests\test_utils.py             13      0   100%
+tests\test_widget.py            17      0   100%
+------------------------------------------------
+TOTAL                          242     21    91%
 ```
 
