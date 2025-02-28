@@ -165,6 +165,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/extra/
 
 # test and homework files
 extra/
