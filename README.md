@@ -94,24 +94,29 @@ Default: EXECUTED
 Статистика по покрытию согласно отчету `pytest-cov`:
 ```
 ---------- coverage: platform win32, python 3.13.0-final-0 -----------
-Name                         Stmts   Miss  Cover
-------------------------------------------------
-src\decorators.py               20      4    80%
-src\external_api.py             26      1    96%
-src\generators.py               13      0   100%
-src\masks.py                     8      0   100%
-src\processing.py               12      0   100%
-src\utils.py                    21      8    62%
-src\widget.py                   11      0   100%
-tests\conftest.py                4      0   100%
-tests\test_decorators.py        14      3    79%
-tests\test_external_api.py      29      1    97%
-tests\test_generators.py        24      3    88%
-tests\test_masks.py              6      0   100%
-tests\test_processing.py        21      1    95%
-tests\test_utils.py             13      0   100%
-tests\test_widget.py            17      0   100%
-------------------------------------------------
-TOTAL                          242     21    91%
+Name                                 Stmts   Miss  Cover
+--------------------------------------------------------
+config.py                                4      0   100%
+src\__init__.py                          0      0   100%
+src\decorators.py                       20      4    80%
+src\external_api.py                     26      1    96%
+src\file_reader_csv_xlsx.py             17      1    94%
+src\generators.py                       13      0   100%
+src\masks.py                            23      0   100%
+src\processing.py                       12      0   100%
+src\utils.py                            32      8    75%
+src\widget.py                           11      0   100%
+tests\__init__.py                        0      0   100%
+tests\conftest.py                        4      0   100%
+tests\test_decorators.py                14      3    79%
+tests\test_external_api.py              29      1    97%
+tests\test_file_reader_csv_xlsx.py      40      0   100%
+tests\test_generators.py                24      3    88%
+tests\test_masks.py                      6      0   100%
+tests\test_processing.py                21      1    95%
+tests\test_utils.py                     13      0   100%
+tests\test_widget.py                    17      0   100%
+--------------------------------------------------------
+TOTAL                                  326     22    93%
 ```
 
