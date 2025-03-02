@@ -1,24 +1,23 @@
-import csv
 import os
+from typing import List, Dict, Any, Hashable
+
 import pandas as pd
 from config import DATA_DIR
 
 
-def read_csv(data: str) -> None:
-    file_path = os.path.join(DATA_DIR, data)
-    with open(file_path, encoding="utf-8") as file:
-        reader = csv.reader(file, delimiter=";")
-        for row in reader:
-            print(row)
+def read_csv(file_name: str, delimiter: str) -> list[dict[Hashable, Any]]:
+    file_path = os.path.join(DATA_DIR, file_name)
+    from_csv = pd.read_csv(file_path, delimiter=delimiter)
+    return from_csv.to_dict(orient="records")
 
 
-def read_excel(data: str) -> pd.DataFrame:
-    file_path = os.path.join(DATA_DIR, data)
-    excel_data = pd.read_excel(file_path)
-    print(f"Размерность файла: {excel_data.shape}")
-    print(excel_data.head(3))
-    return excel_data
+def read_excel(file_name: str) -> list[dict[Hashable, Any]]:
+    file_path = os.path.join(DATA_DIR, file_name)
+    from_excel = pd.read_excel(file_path)
+    print(f"Размерность файла: {from_excel.shape}")
+    print(from_excel.head(3))
+    return from_excel.to_dict(orient="records")
 
 
-# print(read_csv("transactions.csv"))
-print(read_excel("transactions_excel.xlsx"))
+# print(read_csv("transactions.csv", ";"))
+# print(read_excel("transactions_excel.xlsx"))
