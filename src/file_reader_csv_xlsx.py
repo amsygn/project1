@@ -1,5 +1,5 @@
 import os
-from typing import List, Dict, Any, Hashable
+from typing import Any, Hashable
 
 import pandas as pd
 from config import DATA_DIR

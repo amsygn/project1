@@ -1,47 +1,48 @@
-import os
 import unittest
-from unittest.mock import mock_open, patch
-
+from unittest.mock import patch
 import pandas as pd
+import os
 
 from config import DATA_DIR
 from src.file_reader_csv_xlsx import read_csv, read_excel
 
 
-@patch(
-    "builtins.open",
-    new_callable=mock_open,
-    read_data="650703;Счет 58803664561298323391;Счет 39745660563456619397;Перевод организации",
-)
-@patch("csv.reader")
-def test_read_csv_valid_data(mock_csv_reader, mock_file) -> None:
+@patch("pandas.read_csv")
+def test_read_csv_valid_data(mock_read_csv):
     """1. Тест чтения CSV-файла с валидными данными."""
-    read_csv("test.csv")
-    mock_file.assert_called_once_with(
-        os.path.join(DATA_DIR, "test.csv"), encoding="utf-8"
-    )
-    mock_csv_reader.assert_called_once_with(mock_file(), delimiter=";")
+    mock_data = pd.DataFrame({"id": [650703, 5380041], "state": ["EXECUTED", "CANCELED"]})
+    mock_read_csv.return_value = mock_data
+
+    result = read_csv("test.csv", ";")
+
+    mock_read_csv.assert_called_once_with(os.path.join(DATA_DIR, "test.csv"), delimiter=";")
+    expected_result = [{"id": 650703, "state": "EXECUTED"}, {"id": 5380041, "state": "CANCELED"}]
+    assert result == expected_result
 
 
-@patch("builtins.open", new_callable=mock_open, read_data="")
-@patch("csv.reader")
-def test_read_csv_empty_file(mock_csv_reader, mock_file) -> None:
+@patch("pandas.read_csv")
+def test_read_csv_empty_file(mock_read_csv):
     """2. Тест чтения пустого CSV-файла."""
-    read_csv("empty.csv")
-    mock_file.assert_called_once_with(
-        os.path.join(DATA_DIR, "empty.csv"), encoding="utf-8"
-    )
-    mock_csv_reader.assert_called_once_with(mock_file(), delimiter=";")
+    # Мокируем пустой DataFrame
+    mock_data = pd.DataFrame()
+    mock_read_csv.return_value = mock_data
+
+    result = read_csv("empty.csv", ";")
+    mock_read_csv.assert_called_once_with(os.path.join(DATA_DIR, "empty.csv"), delimiter=";")
+    assert result == []
 
 
-@patch("builtins.open", side_effect=FileNotFoundError)
-def test_read_csv_file_not_found(mock_file) -> None:
-    """3. Тест обработки отсутствия CSV-файла."""
-    with unittest.TestCase().assertRaises(FileNotFoundError):
-        read_csv("missing.csv")
-    mock_file.assert_called_once_with(
-        os.path.join(DATA_DIR, "missing.csv"), encoding="utf-8"
-    )
+@patch("pandas.read_csv", side_effect=FileNotFoundError)
+def test_read_csv_file_not_found(mock_read_csv):
+    """4. Тест обработки отсутствия CSV-файла."""
+    try:
+        read_csv("missing.csv", ";")
+    except FileNotFoundError:
+        pass
+    else:
+        assert False, "Файл не найден. Ошибка FileNotFoundError"
+
+    mock_read_csv.assert_called_once_with(os.path.join(DATA_DIR, "missing.csv"), delimiter=";")
 
 
 @patch("pandas.read_excel")
@@ -52,7 +53,6 @@ def test_read_excel_valid_data(mock_read_excel) -> None:
 
     read_excel("test.xlsx")
     mock_read_excel.assert_called_once_with(os.path.join(DATA_DIR, "test.xlsx"))
-    # Проверяем, что данные выводятся корректно
     assert mock_read_excel.call_count == 1
 
 
@@ -71,13 +71,3 @@ def test_read_excel_file_not_found(mock_read_excel) -> None:
     with unittest.TestCase().assertRaises(FileNotFoundError):
         read_excel("missing.xlsx")
     mock_read_excel.assert_called_once_with(os.path.join(DATA_DIR, "missing.xlsx"))
-
-
-# if __name__ == "__main__":
-#     # Запуск тестов
-#     test_read_csv_valid_data()
-#     test_read_csv_empty_file()
-#     test_read_csv_file_not_found()
-#     test_read_excel_valid_data()
-#     test_read_excel_empty_file()
-#     test_read_excel_file_not_found()
