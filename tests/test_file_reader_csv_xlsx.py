@@ -1,7 +1,8 @@
+import os
 import unittest
 from unittest.mock import patch
+
 import pandas as pd
-import os
 
 from config import DATA_DIR
 from src.file_reader_csv_xlsx import read_csv, read_excel
