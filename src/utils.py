@@ -40,5 +40,5 @@ def get_file(file_name: str) -> list:
         return []
 
 # Проверка
-file_open = get_file("operations.json")
-print(file_open)
+# file_open = get_file("operations.json")
+# print(file_open)
