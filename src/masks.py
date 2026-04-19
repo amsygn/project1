@@ -1,29 +1,44 @@
-# card_num = int(input("Введите номер карты (16 цифр)\n"))
-# account_num = int(input("Введите номер счета (20 цифр)\n"))
+import logging
+import os
+
+from config import LOGS_DIR
+
+logging.basicConfig(
+    format="%(asctime)s %(funcName)s: %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO
+)
+logger = logging.getLogger()
+logfile_path = os.path.join(LOGS_DIR, 'masks.log')
+file_handler = logging.FileHandler(logfile_path, "w", encoding="utf-8")
+file_formatter = logging.Formatter("%(asctime)s %(funcName)s: %(levelname)s: %(message)s")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+# создаем именованный логер по имени функции
+func_logger = logging.getLogger(__name__)
 
 
 def get_mask_card_number(card_num: str) -> str:
     """ Функция маскировки номера банковской карты """
 
+    # накладываем маску на номер карты
     card_mask = card_num[:6] + ('*' * 6) + card_num[-4:]
 
-    # Разбиваем маску на блоки
-    card_parts = []
+    # разбиваем маску на группы по 4 цифры
+    card_num_sep = []
     for i in range(0, len(card_mask), 4):
-        card_parts.append(card_mask[i: (i + 4)])
+        card_num_sep.append(card_mask[i: (i + 4)])
 
-    return ' '.join(card_parts)
+    func_logger.info("Номер карты замаскирован")
+    return ' '.join(card_num_sep)
 
 
-def get_mask_account(account_num: int) -> str:
+def get_mask_account(account_num: str) -> str:
     """ Функция маскировки номера банковского счета """
-    
-    account_number = str(account_num)
+    func_logger.info("Номер счета замаскирован")
+    return "**" + account_num[-4:]
 
-    # Проверяем формат счета: число из 20 цифр
-    if not len(account_number) == 20:
-        return "  Неверный формат номера счета"
-
-    account_mask = "**" + account_number[-4:]
-
-    return account_mask
+# Примеры использования
+print(get_mask_card_number("1234567890123456"))
+print(get_mask_account("12345678901234567890"))
