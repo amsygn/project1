@@ -87,3 +87,8 @@ def count_operations_by_categories(
 
     # Возвращаем словарь со всеми категориями (включая нулевые значения)
     return {category: counter.get(category, 0) for category in categories}
+
+
+# Проверка: задаём категории
+# categories = ["Перевод", "Открытие вклада", "Оплата", "Карта"]
+# print(count_operations_by_categories(load_operations(), categories))
