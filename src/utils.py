@@ -1,6 +1,9 @@
 import json
 import os
 import logging
+import pandas as pd
+
+from typing import Any
 
 from config import DATA_DIR, LOGS_DIR
 
@@ -38,6 +41,15 @@ def get_file(file_name: str) -> list:
     except Exception as e:
         logger.error(f"Ошибка при чтении файла {file_name}: {e}")
         return []
+
+
+def reading_excel(file_name: str) -> list[dict[Any, Any]]:
+    """Чтение файлов XLSX"""
+
+    file_path = os.path.join(DATA_DIR, file_name)
+    dict_df_excel = pd.read_excel(file_path).to_dict(orient='records')
+    return dict_df_excel
+
 
 # Проверка
 # file_open = get_file("operations.json")
