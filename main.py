@@ -1,10 +1,14 @@
-from src.file_readers import read_excel_file, read_csv_file
+from typing import Any
+from src.file_reader_csv_xlsx import read_excel, read_csv
+from src.generators import filter_by_currency
+from src.process_operations import filter_transactions_by_description
 from src.utils import get_file
 from src.processing import filter_by_state, sort_by_date
 from src.widget import get_date, mask_account_card
 
 def main():
     """Основная функция, объединяющая функционал разных модулей"""
+
     while True:
         print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
         print("Выберите необходимый пункт меню:")
@@ -21,16 +25,16 @@ def main():
             break
         elif user_choice == "2":
             file_csv_path = 'data/transactions.csv'
-            transactions = trans_reader_csv(file_csv_path)
+            transactions = read_csv(file_csv_path)
             print('Был выбран CSV')
             break
         elif user_choice == "3":
             file_excel_path = 'data/transactions_excel.xlsx'
-            transactions = trans_reader_excel(file_excel_path)
+            transactions = read_excel(file_excel_path)
             print('Был выбран XLSX')
             break
         else:
-            print(f'Данный выбор {user_choice} не доступен')
+            print(f'Данный выбор "{user_choice}" недоступен')
             continue
 
 
@@ -79,7 +83,7 @@ def main():
         if word_for_filter in ['да', 'нет']:
             if word_for_filter == 'да':
                 filter_word = input('Введите слово:\n')
-                ft = process_bank_search(ft, filter_word)
+                ft = filter_transactions_by_description(ft, filter_word)
                 break
             else:
                 break

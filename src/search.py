@@ -40,18 +40,6 @@ def filter_transactions_by_description(transactions: List[Dict[str, Any]], searc
 def count_operations_by_category(operations: List[Dict[str, Any]], categories: List[str]) -> Dict[str, int]:
     """
     Подсчитывает количество операций по заданным категориям.
-
-    Args:
-        operations: Список словарей с банковскими операциями (должен содержать 'description')
-        categories: Список категорий для поиска в описаниях операций
-
-    Returns:
-        Словарь с количеством операций по каждой категории
-
-    Raises:
-        TypeError: Если входные аргументы неверного типа
-        ValueError: Если список категорий пуст
-
     Пример:
         >>> ops = [
         ...     {'description': 'Grocery store', 'amount': 100},
@@ -83,7 +71,7 @@ def count_operations_by_category(operations: List[Dict[str, Any]], categories: L
     return dict(category_counts)
 
 # Пример использования
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # try:
     #     operations_file = load_operations()
     #     filtered = filter_transactions_by_description(operations_file, "перевод")
@@ -94,6 +82,6 @@ if __name__ == "__main__":
     # except Exception as e:
     #     print(f"Ошибка: {e}")
 
-    oper_count = count_operations_by_category(OPERATIONS_FILE_PATH, ["Перевод организации"])
-    print(oper_count)
+    # oper_count = count_operations_by_category(OPERATIONS_FILE_PATH, ["Перевод организации"])
+    # print(oper_count)
 
