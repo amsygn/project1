@@ -1,8 +1,7 @@
 import os
-from typing import Any, Hashable
-
 import pandas as pd
 
+from typing import Any, Hashable
 from config import DATA_DIR
 
 
