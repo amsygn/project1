@@ -1,8 +1,9 @@
-import pytest
 from datetime import datetime
 from unittest.mock import patch
 
-from main import parse_dates_in_transactions, format_transaction, main
+import pytest
+
+from main import format_transaction, main, parse_dates_in_transactions
 
 
 def test_parse_dates_with_z_format():
@@ -136,7 +137,8 @@ def test_format_transaction_with_string_date():
 
     result = format_transaction(transaction)
 
-    expected = "08.05.2026 Перевод с карты на карту\nMasterCard 7771 27** **** 3727 -> Visa Platinum 1293 38** **** 9203\nСумма: 130 USD"
+    expected = ("08.05.2026 Перевод с карты на карту\nMasterCard 7771 27** **** 3727 -> "
+                "Visa Platinum 1293 38** **** 9203\nСумма: 130 USD")
     assert result == expected
 
 

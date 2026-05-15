@@ -1,9 +1,9 @@
 import json
-import os
 import logging
-import pandas as pd
-
+import os
 from typing import Any
+
+import pandas as pd
 
 from config import DATA_DIR, LOGS_DIR
 
@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 def get_file(file_name: str) -> list:
-    """Забирает список операций из JSON-файла и выводит его в консоль"""
+    """Функция забирает список операций из JSON-файла и выводит его в консоль"""
     file_path = os.path.join(DATA_DIR, file_name)
     try:
         with open(file_path, "r", encoding="utf-8") as file:
@@ -31,7 +31,6 @@ def get_file(file_name: str) -> list:
             logger.error(f"Файл {file_name} не содержит список данных")
             return []
 
-
     except FileNotFoundError:
         logger.error(f"Файл {file_name} не найден")
         return []
@@ -44,7 +43,7 @@ def get_file(file_name: str) -> list:
 
 
 def reading_excel(file_name: str) -> list[dict[Any, Any]]:
-    """Чтение файлов XLSX"""
+    """Функция для чтения файлов XLSX"""
 
     file_path = os.path.join(DATA_DIR, file_name)
     dict_df_excel = pd.read_excel(file_path).to_dict(orient='records')

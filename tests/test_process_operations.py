@@ -1,6 +1,6 @@
 import pytest
-from src.process_operations import filter_transactions_by_description, count_operations_by_categories
 
+from src.process_operations import count_operations_by_categories, filter_transactions_by_description
 
 # Тесты для функции filter_transactions_by_description
 

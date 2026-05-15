@@ -1,13 +1,14 @@
 from datetime import datetime
-from src.file_reader_csv_xlsx import read_excel, read_csv
+
+from src.file_reader_csv_xlsx import read_csv, read_excel
 from src.generators import filter_by_currency
 from src.process_operations import filter_transactions_by_description
-from src.utils import get_file
 from src.processing import filter_by_state, sort_by_date
+from src.utils import get_file
 
 
 def parse_dates_in_transactions(transactions):
-    """Преобразует строки с датами в объекты datetime для всех транзакций"""
+    """Функция преобразует строки с датами в объекты datetime для всех транзакций"""
     for transaction in transactions:
         date_str = transaction.get("date", "")
         if date_str:
@@ -147,7 +148,8 @@ def main():
 
     # Фильтрация по слову в описании
     word_filter_choice = input(
-        "\nОтфильтровать список транзакций по определенному слову в описании? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
+        "\nОтфильтровать список транзакций по определенному слову в описании? "
+        "Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
 
     if word_filter_choice == '1':
         filter_word = input('Введите слово: ').strip()

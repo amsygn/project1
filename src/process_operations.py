@@ -1,8 +1,9 @@
+import json
 import os
 import re
-import json
-from typing import List, Dict, Any
 from collections import Counter
+from typing import Any, Dict, List
+
 from config import DATA_DIR
 
 # Определяем адрес файла с данными относительно текущего файла
@@ -10,7 +11,7 @@ OPERATIONS_FILE_PATH = os.path.join(DATA_DIR, 'operations.json')
 
 
 def load_operations() -> List[Dict[str, Any]]:
-    """Загружает список операций из файла operations.json"""
+    """Функция загружает список операций из файла data/operations.json"""
     try:
         with open(OPERATIONS_FILE_PATH, 'r', encoding='utf-8') as file:
             data = json.load(file)
@@ -27,7 +28,7 @@ def filter_transactions_by_description(
         search_string: str
 ) -> List[Dict[str, Any]]:
     """
-    Фильтрует транзакции по наличию строки в описании, используя регулярные выражения,
+    Функция фильтрует транзакции по наличию строки в описании, используя регулярные выражения,
     и возвращает список словарей, у которых в описании есть искомая строка
     """
 
@@ -40,10 +41,7 @@ def filter_transactions_by_description(
         # Формируем список отфильтрованных транзакций
         result = [
             trans for trans in transactions
-            if isinstance(trans, dict) and
-               'description' in trans and
-               isinstance(trans['description'], str) and
-               pattern.search(trans['description'])
+            if isinstance(trans, dict) and 'description' in trans and isinstance(trans['description'], str) and pattern.search(trans['description'])
         ]
 
         return result
@@ -56,10 +54,7 @@ def count_operations_by_categories(
         transactions: List[Dict[str, Any]],
         categories: List[str]
 ) -> Dict[str, int]:
-    """
-    Подсчитывает количество банковских операций по заданным категориям.
-    """
-
+    """Функция подсчитывает количество банковских операций по заданным категориям."""
     if not transactions:
         return {category: 0 for category in categories}
 

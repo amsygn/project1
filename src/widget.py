@@ -1,7 +1,8 @@
 from src.masks import get_mask_account, get_mask_card_number
 
+
 def mask_account_card(user_input: str) -> str:
-    """ Возвращает строку с замаскированным номером карты или счета """
+    """Функция возвращает строку с замаскированным номером карты или счета."""
     input_split = user_input.split()
 
     # определяем формат номера - карта или счет
@@ -15,5 +16,5 @@ def mask_account_card(user_input: str) -> str:
 
 
 def get_date(user_date: str) -> str:
-    """ Возвращает строку с датой в формате ДД.ММ.ГГГГ """
+    """Функция возвращает строку с датой в формате ДД.ММ.ГГГГ """
     return user_date[8:10] + '.' + user_date[5:7] + '.' + user_date[0:4]

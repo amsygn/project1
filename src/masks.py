@@ -40,5 +40,6 @@ def get_mask_account(account_num: str) -> str:
     return "**" + account_num[-4:]
 
 # Примеры использования
-print(get_mask_card_number("1234567890123456"))
-print(get_mask_account("12345678901234567890"))
+#
+# print(get_mask_card_number("1234567890123456"))
+# print(get_mask_account("12345678901234567890"))
