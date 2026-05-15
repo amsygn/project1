@@ -4,7 +4,6 @@ import json
 from typing import List, Dict, Any
 from collections import Counter
 from config import DATA_DIR
-# from tests.conftest import transactions
 
 # Определяем адрес файла с данными относительно текущего файла
 OPERATIONS_FILE_PATH = os.path.join(DATA_DIR, 'operations.json')
@@ -41,10 +40,10 @@ def filter_transactions_by_description(
         # Формируем список отфильтрованных транзакций
         result = [
             trans for trans in transactions
-            if isinstance(trans, dict) and  # проверка, что транзакция - словарь
-               'description' in trans and  # проверка наличия ключа description
-               isinstance(trans['description'], str) and  # проверка, что описание - строка
-               pattern.search(trans['description'])  # поиск подстроки в описании
+            if isinstance(trans, dict) and
+               'description' in trans and
+               isinstance(trans['description'], str) and
+               pattern.search(trans['description'])
         ]
 
         return result
@@ -71,11 +70,9 @@ def count_operations_by_categories(
 
     # Проходим по каждой транзакции
     for transaction in transactions:
-        # Пропускаем некорректные транзакции
         if not isinstance(transaction, dict):
             continue
 
-        # Получаем описание транзакции
         description = transaction.get('description', '')
 
         if not isinstance(description, str):
