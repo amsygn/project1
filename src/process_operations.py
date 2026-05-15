@@ -4,6 +4,7 @@ import json
 from typing import List, Dict, Any
 from collections import Counter
 from config import DATA_DIR
+# from tests.conftest import transactions
 
 # Определяем адрес файла с данными относительно текущего файла
 OPERATIONS_FILE_PATH = os.path.join(DATA_DIR, 'operations.json')
@@ -85,10 +86,12 @@ def count_operations_by_categories(
             if re.search(re.escape(category), description, re.IGNORECASE):
                 counter[category] += 1
 
-    # Возвращаем словарь со всеми категориями (включая нулевые значения)
+    # Возвращаем словарь со всеми категориями, включая нулевые значения
     return {category: counter.get(category, 0) for category in categories}
 
 
-# Проверка: задаём категории
+# Проверка
 # categories = ["Перевод", "Открытие вклада", "Оплата", "Карта"]
 # print(count_operations_by_categories(load_operations(), categories))
+
+# print(*filter_transactions_by_description(load_operations(), "Перевод"), sep="\n")
