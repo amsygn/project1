@@ -20,19 +20,17 @@ def parse_dates_in_transactions(transactions):
                 else:
                     transaction["date"] = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
             except (ValueError, TypeError):
-                pass  # оставляем как есть
+                pass
     return transactions
 
 
 def format_transaction(transaction):
     """Форматирует одну транзакцию для вывода"""
-    # Получаем дату (уже может быть datetime объектом)
     date_obj = transaction.get("date", "")
 
     if isinstance(date_obj, datetime):
         date = date_obj.strftime("%d.%m.%Y")
     else:
-        # fallback для строк
         date_str = str(date_obj)
         date = date_str[:10] if len(date_str) >= 10 else date_str
         if "-" in date:
