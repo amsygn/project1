@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 
 from src.file_reader_csv_xlsx import read_csv, read_excel
@@ -5,7 +6,7 @@ from src.generators import filter_by_currency
 from src.process_operations import filter_transactions_by_description
 from src.processing import filter_by_state, sort_by_date
 from src.utils import get_file
-
+from src.widget import mask_account_card
 
 def parse_dates_in_transactions(transactions):
     """Функция преобразует строки с датами в объекты datetime для всех транзакций"""
@@ -40,15 +41,19 @@ def format_transaction(transaction):
 
     description = transaction.get("description", "Нет описания")
 
-    from_account = transaction.get("from", "Счет")
-    to_account = transaction.get("to", "")
-    if from_account and to_account:
-        account_info = f"{from_account} -> {to_account}"
-    elif from_account:
-        account_info = from_account
+    transaction_from = transaction.get("from", "")
+    transaction_to = transaction.get("to", "")
+    if (type(transaction_from) == float and math.isnan(transaction_from)) or (type(transaction_to) == float and
+                                                                              math.isnan(transaction_to)):
+        account_info = ""
+    elif transaction_from and transaction_to:
+        account_info = f"{mask_account_card(transaction_from)} -> {mask_account_card(transaction_to)}"
+    elif transaction_from:
+        account_info = mask_account_card(transaction_from)
+    elif transaction_to:
+        account_info = mask_account_card(transaction_to)
     else:
-        account_info = to_account
-
+        account_info = ""
     amount = transaction.get("amount", 0)
     currency = transaction.get("currency", {}).get("name", "руб.")
     currency_code = transaction.get("currency", {}).get("code", "RUB")
@@ -72,7 +77,7 @@ def main():
 
     # Выбор файла-источника
     while True:
-        print("Выберите необходимый пункт меню:")
+        print("Шаг 1/5. Выберите необходимый пункт меню:")
         print("1. Получить информацию о транзакциях из JSON-файла")
         print("2. Получить информацию о транзакциях из CSV-файла")
         print("3. Получить информацию о транзакциях из XLSX-файла")
@@ -104,8 +109,8 @@ def main():
     filter_transactions = []
     # Фильтрация по статусу
     while True:
-        print("\nВыберите статус, по которому необходимо выполнить фильтрацию.")
-        print("Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING")
+        print("\nШаг 2/5. Выберите статус, по которому необходимо выполнить фильтрацию.")
+        print("Доступные статусы: EXECUTED, CANCELED, PENDING")
 
         user_status_choice = input("Ваш выбор: ").upper().strip()
 
@@ -119,7 +124,7 @@ def main():
             continue
 
     # Сортировка по дате
-    sort_choice = input("\nОтсортировать операции по дате? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
+    sort_choice = input("\nШаг 3/5. Отсортировать операции по дате? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
 
     if sort_choice == '1':
         order_choice = input('Отсортировать по возрастанию (1) или по убыванию (2)?\nВаш выбор: ').strip().lower()
@@ -133,7 +138,7 @@ def main():
             print("Некорректный ввод, сортировка не применена")
 
     # Фильтрация по валюте
-    currency_choice = input("\nВыводить только рублевые транзакции? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
+    currency_choice = input("\nШаг 4/5. Выводить только рублевые транзакции? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
 
     if currency_choice == "1":
         if user_choice in ['2', '3']:
@@ -146,7 +151,7 @@ def main():
 
     # Фильтрация по слову в описании
     word_filter_choice = input(
-        "\nОтфильтровать список транзакций по определенному слову в описании? "
+        "\nШаг 5/5. Отфильтровать список транзакций по определенному слову в описании? "
         "Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
 
     if word_filter_choice == '1':
@@ -162,11 +167,10 @@ def main():
     if not filter_transactions:
         print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации.")
     else:
-        print(f"Всего банковских операций в выборке: {len(filter_transactions)}\n")
         for transaction in filter_transactions:
             print(format_transaction(transaction))
             print()
-
+        print(f"Всего банковских операций в выборке: {len(filter_transactions)}\n")
 
 if __name__ == "__main__":
     main()
