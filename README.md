@@ -1,4 +1,4 @@
-# Домашняя работа 13.1 #
+# Домашняя работа 13.2 #
 ### Цель проекта:
 Разработка виджета для банка
 
@@ -10,33 +10,35 @@
 4. С помощью шаблона `.env.example` создать файл `.env` для хранения чувствительных данных 
 (ключи API, пароли и т.п.) и обязательно добавить его в список исключений `.gitignore`.  
 
-
-### Содержание проекта:
+### Содержание проекта (в алфавитном порядке):
 В текущей версии в пакете `src` доступны следующие функции и декораторы:
 1. Модуль `decorators.py` с декоратором `log`
 2. Модуль `external_api.py` с функцией конвертации валюты транзакции с помощью внешнего API
-3. Модуль `generators.py`
+3. Модуль `file_reader_csv_x. lsx.py` c функциями чтения файлов форматов `.csv` и `.xlsx` 
+*  Для использования этих функций требуется установка библиотек `csv` и `pandas`
+4. Модуль `generators.py` с функциями:
 * `card_number_generator` - генерирует номер карты в заданном диапазоне
 * `filter_by_currency` - фильтрует входящий список транзакций по коду валюты
 * `transaction_descriptions` - возвращает список описаний транзакций
-4. Модуль `masks.py`
+5. Модуль `masks.py` с функциями:
 * `get_mask_account` - маскировка номера банковского счета
 * `get_mask_card_number` - маскировка номера банковской карты 
-5. Модуль `processing.py`
+6. Модуль `processing.py` с функциями:
 * `filter_by_state` - возвращает новый список словарей, содержащий только те словари,
-    у которых ключ state соответствует указанному значению
+   у которых ключ state соответствует указанному значению
 * `sort_by_date` - возвращает новый список, отсортированный по дате
-6. Модуль `utils.py` с функцией чтения JSON-файла 
-7. Модуль `widget.py`
+7. Модуль `utils.py` с функцией чтения JSON-файла 
+8. Модуль `widget.py` с функциями:
 * `get_date` - возвращает строку с датой в формате ДД.ММ.ГГГГ
 * `mask_account_card` - объединенная функция маскировки номера карты или счета
 
-В домашнем задании 13.1:
-* добавлен модуль `file_reader_csv_xlsx.py` c функциями чтения файлов 
-форматов `.csv` и `.xlsx`.
-* Для использования этих функций требуется установка библиотек `csv` и `pandas`.
-* В папку `data/` добавлены файлы `transactions.csv` и `transactions_excel.xlsx`.
-
+В домашнем задании 13.2:
+* добавлен модуль `src/process_operations.py` с функциями `filter_transactions_by_description`, 
+  которая фильтрует транзакции по наличию строки в описании, используя регулярные выражения, и 
+  `count_operations_by_categories`, которая подсчитывает количество банковских операций по заданным 
+  категориям.
+* написана функция `main` в модуле `main.py`, которая отвечает за основную логику проекта и связывает 
+  функциональности между собой.
 
 ### Примеры работы функций:
 
@@ -87,36 +89,35 @@ Default: EXECUTED
 
 [3 rows x 9 columns]
 ```
-
+`filter_transactions_by_description`: фильтр транзакций по наличию строки в описании
+```
+{'id': 441945886, 'state': 'EXECUTED', 'date': '2019-08-26T10:50:58.294041', 'operationAmount': {'amount': '31957.58', 'currency': {'name': 'руб.', 'code': 'RUB'}}, 'description': 'Перевод организации', 'from': 'Maestro 1596837868705199', 'to': 'Счет 64686473678894779589'}
+{'id': 41428829, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364', 'operationAmount': {'amount': '8221.37', 'currency': {'name': 'USD', 'code': 'USD'}}, 'description': 'Перевод организации', 'from': 'MasterCard 7158300734726758', 'to': 'Счет 35383033474447895560'}
+{'id': 939719570, 'state': 'EXECUTED', 'date': '2018-06-30T02:08:58.425572', 'operationAmount': {'amount': '9824.07', 'currency': {'name': 'USD', 'code': 'USD'}}, 'description': 'Перевод организации', 'from': 'Счет 75106830613657916952', 'to': 'Счет 11776614605963066702'}
+{'id': 142264268, 'state': 'EXECUTED', 'date': '2019-04-04T23:20:05.206878', 'operationAmount': {'amount': '79114.93', 'currency': {'name': 'USD', 'code': 'USD'}}, 'description': 'Перевод со счета на счет', 'from': 'Счет 19708645243227258542', 'to': 'Счет 75651667383060284188'}
+{'id': 873106923, 'state': 'EXECUTED', 'date': '2019-03-23T01:09:46.296404', 'operationAmount': {'amount': '43318.34', 'currency': {'name': 'руб.', 'code': 'RUB'}}, 'description': 'Перевод со счета на счет', 'from': 'Счет 44812258784861134719', 'to': 'Счет 74489636417521191160'}
+```
 
 ### Тестирование проекта
 Проект содержит тесты всех модулей в папке `tests`.
 Статистика по покрытию согласно отчету `pytest-cov`:
 ```
 ---------- coverage: platform win32, python 3.13.0-final-0 -----------
-Name                                 Stmts   Miss  Cover
+Name                                Stmts   Miss Cover
 --------------------------------------------------------
-config.py                                4      0   100%
-src\__init__.py                          0      0   100%
-src\decorators.py                       20      4    80%
-src\external_api.py                     26      1    96%
-src\file_reader_csv_xlsx.py             17      1    94%
-src\generators.py                       13      0   100%
-src\masks.py                            23      0   100%
-src\processing.py                       12      0   100%
-src\utils.py                            32      8    75%
-src\widget.py                           11      0   100%
-tests\__init__.py                        0      0   100%
-tests\conftest.py                        4      0   100%
-tests\test_decorators.py                14      3    79%
-tests\test_external_api.py              29      1    97%
-tests\test_file_reader_csv_xlsx.py      40      0   100%
-tests\test_generators.py                24      3    88%
-tests\test_masks.py                      6      0   100%
-tests\test_processing.py                21      1    95%
-tests\test_utils.py                     13      0   100%
-tests\test_widget.py                    17      0   100%
+tests\__init__.py	 	            0	    0	 100%
+tests\conftest.py	 	            4	    0    100%
+tests\test_decorators.py	 	    14	    3	 79%
+tests\test_external_api.py	 	    29	    1	 97%
+tests\test_file_reader_csv_xlsx.py 	46	    1	 98%
+tests\test_generators.py	 	    24	    3	 88%
+tests\test_main.py	 	            92	    1  	 99%
+tests\test_masks.py	 	            6	    0	 100%
+tests\test_process_operations.py	59	    0	 100%
+tests\test_processing.py	 	    21	    1	 95%
+tests\test_utils.py	 	            13	    0	 100%
+tests\test_widget.py	 	        17	    0	 100%
 --------------------------------------------------------
-TOTAL                                  326     22    93%
+TOTAL                               644 	70	 89%
 ```
 

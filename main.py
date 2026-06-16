@@ -1,18 +1,226 @@
+import math
+from datetime import datetime
+from typing import Dict, Any, List
+
+from src.file_reader_csv_xlsx import read_csv, read_excel
+from src.process_operations import filter_transactions_by_description
 from src.processing import filter_by_state, sort_by_date
-
-data_logs = [{'id': 41428829, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364'},
-            {'id': 939719570, 'state': 'EXECUTED', 'date': '2018-06-30T02:08:58.425572'},
-            {'id': 594226727, 'state': 'CANCELED', 'date': '2018-09-12T21:27:25.241689'},
-            {'id': 615064591, 'state': 'CANCELED', 'date': '2018-10-14T08:21:33.419441'}]
+from src.utils import get_file
+from src.widget import mask_account_card
 
 
-print('\n### Sorted by status:\nDefault: EXECUTED')
-state_filter = filter_by_state(data_logs)
-for state in state_filter:
-    print(state)
+def parse_dates_in_transactions(transactions: List[Dict]) -> List[Dict]:
+    """Функция преобразует строки с датами в объекты datetime для всех транзакций"""
+    for transaction in transactions:
+        date_str = transaction.get("date", "")
+        if date_str:
+            try:
+                if "Z" in date_str:
+                    transaction["date"] = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+                elif "." in date_str:
+                    transaction["date"] = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+                else:
+                    transaction["date"] = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+            except (ValueError, TypeError):
+                pass
+    return transactions
 
-print('\n### Sorted by date:')
-date_sorted = sort_by_date(data_logs)
-for d in date_sorted:
-    print(d)
-print()
+
+def get_amount_and_currency(transaction: Dict, source_type: str) -> tuple:
+    """Универсальное получение суммы и валюты из транзакции."""
+    if source_type == 'json':
+        operation_amount = transaction.get("operationAmount", {})
+        amount = float(operation_amount.get("amount", 0))
+        currency = operation_amount.get("currency", {})
+        currency_code = currency.get("code", "RUB")
+        currency_name = currency.get("name", "руб.")
+    else:
+        amount = float(transaction.get("amount", 0))
+        currency_code = transaction.get("currency_code", "RUB")
+        currency_name = transaction.get("currency_name", "руб.")
+
+    return amount, currency_code, currency_name
+
+
+def format_transaction(transaction: Dict, source_type: str = 'json') -> str:
+    """Форматирует одну транзакцию для вывода"""
+    # Обработка даты
+    date_obj = transaction.get("date", "")
+
+    if isinstance(date_obj, datetime):
+        date = date_obj.strftime("%d.%m.%Y")
+    else:
+        date_str = str(date_obj)
+        date = date_str[:10] if len(date_str) >= 10 else date_str
+        if "-" in date:
+            parts = date.split("-")
+            if len(parts) == 3:
+                date = f"{parts[2]}.{parts[1]}.{parts[0]}"
+
+    description = transaction.get("description", "Нет описания")
+
+    # Обработка счетов (с проверкой на пустые значения)
+    transaction_from = transaction.get("from", "")
+    transaction_to = transaction.get("to", "")
+
+    def is_empty(value):
+        """Проверка на пустое значение"""
+        if value is None or value == "" or value == "nan":
+            return True
+        if isinstance(value, float) and (math.isnan(value) or value != value):  # nan != nan
+            return True
+        return False
+
+    from_empty = is_empty(transaction_from)
+    to_empty = is_empty(transaction_to)
+
+    if not from_empty and not to_empty:
+        try:
+            account_info = f"{mask_account_card(transaction_from)} -> {mask_account_card(transaction_to)}"
+        except ValueError:
+            account_info = f"{transaction_from} -> {transaction_to}"
+    elif not from_empty:
+        try:
+            account_info = mask_account_card(transaction_from)
+        except ValueError:
+            account_info = transaction_from
+    elif not to_empty:
+        try:
+            account_info = mask_account_card(transaction_to)
+        except ValueError:
+            account_info = transaction_to
+    else:
+        account_info = ""
+
+    # Получаем сумму и валюту
+    amount, currency_code, currency_name = get_amount_and_currency(transaction, source_type)
+
+    # Формируем строку валюты
+    if currency_code == "RUB" or currency_name.lower() in ["руб.", "рубль"]:
+        currency_str = "руб."
+    elif currency_code == "USD":
+        currency_str = "USD"
+    elif currency_code == "EUR":
+        currency_str = "EUR"
+    else:
+        currency_str = currency_code
+
+    return f"{date} {description}\n{account_info}\nСумма: {amount} {currency_str}"
+
+
+def main():
+    """Основная функция, объединяющая функционал разных модулей"""
+
+    print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
+
+    # Выбор файла-источника
+    while True:
+        print("Шаг 1/5. Выберите необходимый пункт меню:")
+        print("1. Получить информацию о транзакциях из JSON-файла")
+        print("2. Получить информацию о транзакциях из CSV-файла")
+        print("3. Получить информацию о транзакциях из XLSX-файла")
+
+        user_choice = input("Ваш выбор: ").strip()
+        source_type = None
+
+        if user_choice == "1":
+            file_json_path = 'operations.json'
+            transactions = get_file(file_json_path)
+            source_type = 'json'
+            print("Для обработки выбран JSON-файл.")
+            break
+        elif user_choice == "2":
+            file_csv_path = 'transactions.csv'
+            transactions = read_csv(file_csv_path, delimiter=";")
+            source_type = 'csv'
+            print("Для обработки выбран CSV-файл.")
+            break
+        elif user_choice == "3":
+            file_excel_path = 'transactions_excel.xlsx'
+            transactions = read_excel(file_excel_path)
+            source_type = 'xlsx'
+            print("Для обработки выбран XLSX-файл.")
+            break
+        else:
+            print(f'Данный выбор "{user_choice}" недоступен')
+            continue
+
+    # Формат даты транзакции
+    transactions = parse_dates_in_transactions(transactions)
+
+    # Фильтрация по статусу
+    filter_transactions = []
+    while True:
+        print("\nШаг 2/5. Выберите статус, по которому необходимо выполнить фильтрацию.")
+        print("Доступные статусы: EXECUTED, CANCELED, PENDING")
+
+        user_status_choice = input("Ваш выбор: ").upper().strip()
+
+        if user_status_choice in ['EXECUTED', 'CANCELED', 'PENDING']:
+            filter_transactions = filter_by_state(transactions, user_status_choice)
+            print(f'Операции отфильтрованы по статусу "{user_status_choice}"')
+            break
+        else:
+            print(f'Статус операции "{user_status_choice}" недоступен.')
+            continue
+
+    # Сортировка по дате
+    sort_choice = input("\nШаг 3/5. Отсортировать операции по дате? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
+
+    if sort_choice == '1':
+        order_choice = input('Отсортировать по возрастанию (1) или по убыванию (2)?\nВаш выбор: ').strip().lower()
+        if order_choice == '1':
+            filter_transactions = sort_by_date(filter_transactions, reverse=False)
+            print("Операции отсортированы по возрастанию даты")
+        elif order_choice == '2':
+            filter_transactions = sort_by_date(filter_transactions, reverse=True)
+            print("Операции отсортированы по убыванию даты")
+        else:
+            print("Некорректный ввод, сортировка не применена")
+
+    # Фильтрация по валюте (универсальная)
+    currency_choice = input(
+        "\nШаг 4/5. Выводить только рублевые транзакции? Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
+
+    if currency_choice == "1":
+        filtered_by_currency = []
+        for t in filter_transactions:
+            if source_type == 'json':
+                currency_code = t.get("operationAmount", {}).get("currency", {}).get("code", "")
+            else:
+                currency_code = t.get("currency_code", "")
+
+            if currency_code == 'RUB':
+                filtered_by_currency.append(t)
+
+        filter_transactions = filtered_by_currency
+        print("Выбраны только рублёвые транзакции")
+    else:
+        print("Рублёвая фильтрация не применена")
+
+    # Фильтрация по слову в описании
+    word_filter_choice = input(
+        "\nШаг 5/5. Отфильтровать список транзакций по определенному слову в описании? "
+        "Да (1) / Нет (2)\nВаш выбор: ").strip().lower()
+
+    if word_filter_choice == '1':
+        filter_word = input('Введите слово: ').strip()
+        filter_transactions = filter_transactions_by_description(filter_transactions, filter_word)
+        print(f"Транзакции отфильтрованы по слову '{filter_word}'")
+    else:
+        print("Фильтрация по слову не применена")
+
+    # Вывод результатов
+    print("\nРаспечатываю итоговый список транзакций...")
+
+    if not filter_transactions:
+        print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации.")
+    else:
+        for transaction in filter_transactions:
+            print(format_transaction(transaction, source_type))
+            print()
+        print(f"Всего банковских операций в выборке: {len(filter_transactions)}\n")
+
+
+if __name__ == "__main__":
+    main()
